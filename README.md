@@ -1,5 +1,12 @@
 # How do I create a RESTful API using Python conda anaconda miniconda
 
+Agenda
+
++ Python Hello World
++ Python RESTful API
++ Python SQL Server
++ Python Logging
+
 https://github.com/gtechsltn/Python_RESTful_API/
 
 https://github.com/gtechsltn/NET9_BlazorServerSide_BankingApp/
