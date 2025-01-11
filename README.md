@@ -50,15 +50,15 @@ pip install fastapi uvicorn
 
 ## Optional: Install database libraries if needed:
 
-SQLite (built-in with Python).
+### SQLite (built-in with Python).
 
-MySQL:
+### MySQL:
 
 ```
 conda install mysql-connector-python -y
 ```
 
-PostgreSQL:
+### PostgreSQL:
 
 ```
 pip install psycopg2
@@ -192,3 +192,332 @@ uvicorn app:app --host 0.0.0.0 --port 80 --workers 4
 ```
 
 With this setup, you have a functioning RESTful API ready for local development or deployment. Let me know if you need additional help!
+
+# Python driver for SQL Server
+
+To connect Python applications to SQL Server, you can use the pyodbc or pymssql libraries, or the Microsoft ODBC Driver for SQL Server. Below is a step-by-step guide for setting up and using these drivers:
+
+Connecting to Microsoft SQL server using Python
+
+Python SQL Server Integration using **pyodbc** : 5 steps
+
+## 1. Install the Python SQL Server Driver
+
+### Option 1: pyodbc (Recommended)
+
+**pyodbc** is widely used and reliable for connecting Python to SQL Server.
+
+Install pyodbc:
+
+```
+pip install pyodbc
+```
+
+Install the ODBC Driver for SQL Server for your system:
+
++ Windows
++ Linux
++ macOS
+
+### Option 2: pymssql (Deprecated)
+
+**pymssql** was commonly used but is no longer actively maintained. Use pyodbc instead if possible.
+
+Install pymssql:
+
+```
+pip install pymssql
+```
+
+
+## 2. Connect to SQL Server
+
+### Using pyodbc:
+
+Here's how to establish a connection:
+
+Code Example:
+
+``
+import pyodbc
+
+# Connection details
+server = 'your_server_name'  # e.g., 'localhost' or '127.0.0.1'
+database = 'your_database_name'
+username = 'your_username'
+password = 'your_password'
+
+# Create a connection
+connection_string = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}"
+conn = pyodbc.connect(connection_string)
+
+# Create a cursor and execute a query
+cursor = conn.cursor()
+cursor.execute("SELECT @@VERSION")
+row = cursor.fetchone()
+print(f"SQL Server version: {row[0]}")
+
+# Close the connection
+cursor.close()
+conn.close()
+```
+
+#### Key Notes:
++ Ensure the ODBC Driver version matches the driver installed on your system (e.g., ODBC Driver 18 for SQL Server).
++ Replace placeholders (your_server_name, your_database_name, etc.) with actual details.
+
+### Using pymssql:
+
+Here's a similar connection example:
+
+Code Example:
+
+```
+import pymssql
+
+# Connection details
+server = 'your_server_name'  # e.g., 'localhost' or '127.0.0.1'
+database = 'your_database_name'
+username = 'your_username'
+password = 'your_password'
+
+# Create a connection
+conn = pymssql.connect(server=server, user=username, password=password, database=database)
+
+# Create a cursor and execute a query
+cursor = conn.cursor()
+cursor.execute("SELECT @@VERSION")
+row = cursor.fetchone()
+print(f"SQL Server version: {row[0]}")
+
+# Close the connection
+cursor.close()
+conn.close()
+```
+
+## 3. Common Queries
+
+### Insert Data:
+```
+cursor.execute("INSERT INTO TableName (Column1, Column2) VALUES (?, ?)", (Value1, Value2))
+conn.commit()
+```
+
+### Retrieve Data:
+```
+cursor.execute("SELECT * FROM TableName")
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+```
+
+### Update Data:
+```
+cursor.execute("UPDATE TableName SET Column1 = ? WHERE Column2 = ?", (NewValue, ConditionValue))
+conn.commit()
+```
+
+### Delete Data:
+```
+cursor.execute("DELETE FROM TableName WHERE Column1 = ?", (ConditionValue,))
+conn.commit()
+```
+
+## 4. Troubleshooting
++ Driver Not Found: Ensure the correct ODBC driver is installed (e.g., ODBC Driver 17 for SQL Server).
++ Connection Refused: Verify SQL Server is running and accessible on the specified server and port.
++ Authentication Errors: Confirm credentials and that SQL Server authentication is enabled.
+
+# Logging in Python
+
+## 1. Basic Logging
+
+The simplest way to use the logging module is to log messages to the console.
+
+```
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+# Log messages
+logging.debug("This is a DEBUG message.")
+logging.info("This is an INFO message.")
+logging.warning("This is a WARNING message.")
+logging.error("This is an ERROR message.")
+logging.critical("This is a CRITICAL message.")
+```
+
+Output:
+
+```
+This is an INFO message.
+This is a WARNING message.
+This is an ERROR message.
+This is a CRITICAL message.
+```
+
+## 2. Logging Levels
+
+The logging module has the following severity levels, from lowest to highest:
+
++ DEBUG: Detailed information, typically for diagnosing problems.
++ INFO: Confirmation that things are working as expected.
++ WARNING: An indication something unexpected happened or might cause problems.
++ ERROR: A more serious issue, the software has not been able to perform some function.
++ CRITICAL: A very serious error, the program may not continue.
+
+Set the logging level with:
+
+```
+logging.basicConfig(level=logging.<LEVEL>)
+```
+
+For example, logging.basicConfig(level=logging.DEBUG) will log all messages, including DEBUG and higher levels.
+
+## 3. Customize Logging Format
+
+You can configure the log message format using format in basicConfig.
+
+```
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+logging.info("This is an INFO message.")
+```
+
+Output:
+
+```
+2025-01-11 10:00:00,000 - root - INFO - This is an INFO message.
+```
+
+### Common Format Specifiers:
+
++ %(asctime)s: Timestamp of the log message.
++ %(name)s: Logger name.
++ %(levelname)s: Severity level of the log.
++ %(message)s: The log message.
++ %(filename)s: Name of the source file.
++ %(lineno)d: Line number where the log call occurred.
+
+## 4. Logging to a File
+
+You can log messages to a file instead of the console by specifying a filename in basicConfig.
+
+```
+logging.basicConfig(
+    filename="app.log",
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logging.info("This message will be written to app.log.")
+```
+
+## 5. Advanced Logging Configuration
+
+For more control, use logging objects like Logger, Handler, and Formatter.
+
+Example with Multiple Handlers:
+
+```
+import logging
+
+# Create a logger
+logger = logging.getLogger("MyLogger")
+logger.setLevel(logging.DEBUG)
+
+# Create handlers
+console_handler = logging.StreamHandler()
+file_handler = logging.FileHandler("app.log")
+
+# Set levels for handlers
+console_handler.setLevel(logging.WARNING)
+file_handler.setLevel(logging.DEBUG)
+
+# Create formatters and add to handlers
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+console_handler.setFormatter(formatter)
+file_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+# Log messages
+logger.debug("This is a DEBUG message.")
+logger.warning("This is a WARNING message.")
+```
+
+## 6. Rotating Log Files
+
+Use RotatingFileHandler to manage log file sizes and rotate them when they exceed a certain size.
+
+Example:
+
+```
+from logging.handlers import RotatingFileHandler
+
+# Create a logger
+logger = logging.getLogger("RotatingLogger")
+logger.setLevel(logging.DEBUG)
+
+# Create a rotating file handler
+handler = RotatingFileHandler("rotating_app.log", maxBytes=2000, backupCount=5)
+handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+
+logger.addHandler(handler)
+
+# Log messages
+for i in range(100):
+    logger.debug(f"This is log message {i}.")
+```
+
++ maxBytes: Maximum size of a log file (in bytes) before rotation.
++ backupCount: Number of backup files to keep.
+
+## 7. Logging in a Module
+
+To log within modules, create loggers using the module's __name__.
+
+Example:
+
+```
+# mymodule.py
+import logging
+
+logger = logging.getLogger(__name__)
+
+def some_function():
+    logger.info("Log from some_function.")
+```
+
+```
+# main.py
+import logging
+import mymodule
+
+logging.basicConfig(level=logging.INFO)
+
+mymodule.some_function()
+```
+
+## 8. Third-Party Logging Libraries
+
+Loguru: A modern logging library with better syntax and features.
+
+```
+pip install loguru
+```
+
+Example:
+
+```
+from loguru import logger
+
+logger.info("This is a log message.")
+logger.debug("Debugging information.")
+```
