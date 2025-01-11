@@ -245,7 +245,7 @@ Here's how to establish a connection:
 
 Code Example:
 
-``
+```
 import pyodbc
 
 # Connection details
