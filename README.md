@@ -1,5 +1,9 @@
 # How do I create a RESTful API using Python conda anaconda miniconda
 
+https://github.com/gtechsltn/Python_RESTful_API/
+
+https://github.com/gtechsltn/NET9_BlazorServerSide_BankingApp/
+
 Creating a RESTful API using Python with Conda (Anaconda or Miniconda) involves setting up a virtual environment, installing the necessary dependencies, and implementing the API using a web framework like Flask or FastAPI.
 
 Here's a step-by-step guide:
